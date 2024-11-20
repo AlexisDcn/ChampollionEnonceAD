@@ -22,7 +22,7 @@ public class Main {
         System.out.printf("Mr. %s a un total de %d heures prévues dans l'UE %s%n",
                 bastide.getNom(),
                 bastide.heuresPrevuesPourUE(uml),
-                uml.getIntitule());
+                uml.getMyIntitule());
     }
 
 }

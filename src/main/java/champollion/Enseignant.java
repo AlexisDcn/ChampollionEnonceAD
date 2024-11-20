@@ -1,15 +1,25 @@
 package champollion;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Un enseignant est caractérisé par les informations suivantes : son nom, son adresse email, et son service prévu,
  * et son emploi du temps.
  */
 public class Enseignant extends Personne {
 
-    // TODO : rajouter les autres méthodes présentes dans le diagramme UML
+    private ArrayList<ServicePrevu> lesServicesPrevus;
+    ServicePrevu service;
+    private ArrayList<Intervention> lesInterventions;
+
+    private HashMap<UE, ServicePrevu> lesEnseignements;
 
     public Enseignant(String nom, String email) {
         super(nom, email);
+        lesServicesPrevus = new ArrayList<>();
+        lesInterventions = new ArrayList<>();
+        lesEnseignements = new HashMap<>();
     }
 
     /**
@@ -21,8 +31,13 @@ public class Enseignant extends Personne {
      *
      */
     public int heuresPrevues() {
-        // TODO: Implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        int equivalentTD = 0;
+        for (ServicePrevu service : lesServicesPrevus) {
+            equivalentTD += (int) service.getVolumeCM() * 1.5;
+            equivalentTD += (int) service.getVolumeTD();
+            equivalentTD += (int) service.getVolumeTP() * 0.75;
+        }
+        return equivalentTD;
     }
 
     /**
@@ -35,8 +50,15 @@ public class Enseignant extends Personne {
      *
      */
     public int heuresPrevuesPourUE(UE ue) {
-        // TODO: Implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        int equivalentTD = 0;
+        for (ServicePrevu service : lesServicesPrevus) {
+            if (service.getUe() == ue) {
+                equivalentTD += (int) service.getVolumeCM() * 1.5;
+                equivalentTD += (int) service.getVolumeTD();
+                equivalentTD += (int) service.getVolumeTP() * 0.75;
+            }
+        }
+        return equivalentTD;
     }
 
     /**
@@ -48,8 +70,47 @@ public class Enseignant extends Personne {
      * @param volumeTP le volume d'heures de TP
      */
     public void ajouteEnseignement(UE ue, int volumeCM, int volumeTD, int volumeTP) {
-        // TODO: Implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        if (volumeCM < 0 || volumeTD < 0 || volumeTP < 0) {
+            throw new IllegalArgumentException("Les valeurs des volumes d'heures doivent être positives ou nulles");
+        }
+
+        //ServicePrevu service = lesEnseignements.get(ue);
+
+        if (service == null) {
+            ServicePrevu service = new ServicePrevu(ue, volumeCM, volumeTD, volumeTP);
+            lesServicesPrevus.add(service);
+        } else {
+            service.setVolumeCM(service.getVolumeCM() + volumeCM);
+            service.setVolumeTD(service.getVolumeTD() + volumeTD);
+            service.setVolumeTP(service.getVolumeTP() + volumeTP);
+        }
     }
+
+
+    public void ajouteIntervention(Intervention intervention) throws Exception {
+        if (!lesEnseignements.containsKey(intervention.getUe())) {
+            throw new IllegalArgumentException("La matière ne fait pas partie de l'enseignement");
+        }
+        lesInterventions.add(intervention);
+    }
+
+    public int resteAPlanifier(UE ue, TypeIntervention typeInter) {
+        double heurePlanifie = 0;
+
+        ServicePrevu s = lesEnseignements.get(ue);
+        if (s == null) {
+            return 0;
+        }
+
+        double heureAPlanifie = s.getVolume(typeInter);
+
+        for (Intervention inter : lesInterventions) {
+            if ((ue.equals(inter.getUe())) && (typeInter.equals(inter.getTypeInter()))) {
+                heurePlanifie += inter.getDuree();
+            }
+        }
+        return (int) Math.round(Math.abs(heurePlanifie - heureAPlanifie));
+    }
+
 
 }
