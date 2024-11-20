@@ -9,11 +9,11 @@ import java.util.HashMap;
  */
 public class Enseignant extends Personne {
 
-    private ArrayList<ServicePrevu> lesServicesPrevus;
+    private final ArrayList<ServicePrevu> lesServicesPrevus;
     ServicePrevu service;
-    private ArrayList<Intervention> lesInterventions;
+    private final ArrayList<Intervention> lesInterventions;
 
-    private HashMap<UE, ServicePrevu> lesEnseignements;
+    private final HashMap<UE, ServicePrevu> lesEnseignements;
 
     public Enseignant(String nom, String email) {
         super(nom, email);
@@ -33,9 +33,9 @@ public class Enseignant extends Personne {
     public int heuresPrevues() {
         int equivalentTD = 0;
         for (ServicePrevu service : lesServicesPrevus) {
-            equivalentTD += (int) service.getVolumeCM() * 1.5;
+            equivalentTD += (int) ((int) service.getVolumeCM() * 1.5);
             equivalentTD += (int) service.getVolumeTD();
-            equivalentTD += (int) service.getVolumeTP() * 0.75;
+            equivalentTD += (int) ((int) service.getVolumeTP() * 0.75);
         }
         return equivalentTD;
     }
@@ -52,14 +52,15 @@ public class Enseignant extends Personne {
     public int heuresPrevuesPourUE(UE ue) {
         int equivalentTD = 0;
         for (ServicePrevu service : lesServicesPrevus) {
-            if (service.getUe() == ue) {
-                equivalentTD += (int) service.getVolumeCM() * 1.5;
-                equivalentTD += (int) service.getVolumeTD();
-                equivalentTD += (int) service.getVolumeTP() * 0.75;
+            if (service.getUe().equals(ue)) { // Utiliser equals pour comparer les objets
+                equivalentTD += Math.round(service.getVolumeCM() * 1.5);
+                equivalentTD += service.getVolumeTD();
+                equivalentTD += Math.round(service.getVolumeTP() * 0.75);
             }
         }
         return equivalentTD;
     }
+
 
     /**
      * Ajoute un enseignement au service prévu pour cet enseignant
@@ -71,14 +72,22 @@ public class Enseignant extends Personne {
      */
     public void ajouteEnseignement(UE ue, int volumeCM, int volumeTD, int volumeTP) {
         if (volumeCM < 0 || volumeTD < 0 || volumeTP < 0) {
-            throw new IllegalArgumentException("Les valeurs des volumes d'heures doivent être positives ou nulles");
+            throw new IllegalArgumentException("Les volumes d'heures doivent être positifs ou nuls");
         }
 
-        //ServicePrevu service = lesEnseignements.get(ue);
+        // Recherche du service prévu existant pour l'UE
+        ServicePrevu service = null;
+        for (ServicePrevu sp : lesServicesPrevus) {
+            if (sp.getUe().equals(ue)) {
+                service = sp;
+                break;
+            }
+        }
 
         if (service == null) {
-            ServicePrevu service = new ServicePrevu(ue, volumeCM, volumeTD, volumeTP);
+            service = new ServicePrevu(ue, volumeCM, volumeTD, volumeTP);
             lesServicesPrevus.add(service);
+            lesEnseignements.put(ue, service); // Synchronisation avec lesEnseignements
         } else {
             service.setVolumeCM(service.getVolumeCM() + volumeCM);
             service.setVolumeTD(service.getVolumeTD() + volumeTD);
@@ -87,12 +96,15 @@ public class Enseignant extends Personne {
     }
 
 
+
+
     public void ajouteIntervention(Intervention intervention) throws Exception {
         if (!lesEnseignements.containsKey(intervention.getUe())) {
             throw new IllegalArgumentException("La matière ne fait pas partie de l'enseignement");
         }
         lesInterventions.add(intervention);
     }
+
 
     public int resteAPlanifier(UE ue, TypeIntervention typeInter) {
         double heurePlanifie = 0;
@@ -110,6 +122,10 @@ public class Enseignant extends Personne {
             }
         }
         return (int) Math.round(Math.abs(heurePlanifie - heureAPlanifie));
+    }
+
+    public boolean enSousService(){
+        return heuresPrevues() < 192;
     }
 
 

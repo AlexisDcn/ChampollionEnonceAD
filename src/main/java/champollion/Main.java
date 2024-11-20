@@ -19,10 +19,7 @@ public class Main {
 
         System.out.printf("Mr. %s a un total de %d heures prévues%n", bastide.getNom(), bastide.heuresPrevues());
         System.out.printf("Mr. %s a un total de %d heures prévues%n", lamine.getNom(), lamine.heuresPrevues());
-        System.out.printf("Mr. %s a un total de %d heures prévues dans l'UE %s%n",
-                bastide.getNom(),
-                bastide.heuresPrevuesPourUE(uml),
-                uml.getMyIntitule());
+        System.out.printf("Mr. %s a un total de %d heures prévues dans l'UE %s%n", bastide.getNom(), bastide.heuresPrevuesPourUE(uml), uml.getMyIntitule());
     }
 
 }

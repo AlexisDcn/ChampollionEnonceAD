@@ -1,15 +1,18 @@
 package champollion;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Getter
 public class Intervention {
     private Salle salle;
+    @Setter
     private UE ue;
     private TypeIntervention typeInter;
     private Date debut;
     private int duree;
+    @Setter
     private boolean annule;
     private int heureDebut;
 
@@ -19,6 +22,15 @@ public class Intervention {
         this.annule = annule;
         this.heureDebut = heureDebut;
     }
+
+    public Intervention(Salle s, UE java, Enseignant untel, TypeIntervention typeIntervention, Date date, int duree) {
+        this.salle = s;
+        this.ue = java;
+        this.typeInter = typeIntervention;
+        this.debut = date;
+        this.duree = duree;
+    }
+
 
     @Override
     public String toString() {
