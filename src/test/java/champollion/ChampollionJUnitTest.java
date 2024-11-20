@@ -136,6 +136,14 @@ public class ChampollionJUnitTest {
 				"Les volumes d'heures doivent être cumulés pour une même UE");
 	}
 
+	@Test
+	public void testAjouterPlusieursUE() {
+		untel.ajouteEnseignement(uml, 5, 10, 3);
+		untel.ajouteEnseignement(java, 2, 5, 1);
+		assertEquals(2, untel.getLesServicesPrevus().size()); // Vérifie que deux services prévus ont été créés
+		assertEquals(2, untel.getLesEnseignements().size()); // Vérifie que deux enseignements ont été ajoutés
+	}
+
 
 	@Test
 	public void testResteAPlanifierAvecInterventions() throws Exception {

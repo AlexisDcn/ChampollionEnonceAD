@@ -1,5 +1,7 @@
 package champollion;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,6 +9,7 @@ import java.util.HashMap;
  * Un enseignant est caractérisé par les informations suivantes : son nom, son adresse email, et son service prévu,
  * et son emploi du temps.
  */
+@Getter
 public class Enseignant extends Personne {
 
     private final ArrayList<ServicePrevu> lesServicesPrevus;
